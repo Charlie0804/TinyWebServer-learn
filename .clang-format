@@ -1,0 +1,9 @@
+# Google
+BasedOnStyle: Google
+Language: Cpp
+ColumnLimit: 120
+IndentWidth: 4
+UseTab: Never
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false

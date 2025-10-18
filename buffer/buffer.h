@@ -1,16 +1,18 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include <assert.h>
+#include <sys/uio.h>
+#include <unistd.h>
+
+#include <atomic>
 #include <cstring>
 #include <iostream>
-#include <unistd.h>
-#include <sys/uio.h>
 #include <vector>
-#include <atomic>
-#include <assert.h>
 
-class Buffer {
-public:
+class Buffer
+{
+   public:
     Buffer(int initBuffSize = 1024);
     ~Buffer() = default;
 
@@ -39,7 +41,7 @@ public:
     ssize_t ReadFd(int fd, int* Errno);
     ssize_t WriteFd(int fd, int* Errno);
 
-private:
+   private:
     char* BeginPtr_();
     const char* BeginPtr_() const;
     void MakeSpace_(size_t len);
@@ -49,4 +51,4 @@ private:
     std::atomic<std::size_t> writePos_;
 };
 
-#endif //BUFFER_H
+#endif  // BUFFER_H
