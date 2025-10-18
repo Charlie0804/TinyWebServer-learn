@@ -1,23 +1,24 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <assert.h>
+#include <stdarg.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+
 #include <mutex>
 #include <string>
 #include <thread>
-#include <sys/time.h>
-#include <string.h>
-#include <stdarg.h>
-#include <assert.h>
-#include <sys/stat.h>
-#include "block_queue.h"
-#include "../buffer/buffer.h"
 
-class Log{
-public:
-    void init(int level, const char* path = "./log",
-                const char* suffix = ".log",
-                int maxQueueCapacity = 1024);
-    
+#include "../buffer/buffer.h"
+#include "block_queue.h"
+
+class Log
+{
+   public:
+    void init(int level, const char* path = "./log", const char* suffix = ".log", int maxQueueCapacity = 1024);
+
     static Log* Instance();
     static void FlushLogThread();
 
@@ -26,18 +27,18 @@ public:
 
     int GetLevel();
     void SetLevel(int level);
-    bool IsOpen() {return isOpen_;}
+    bool IsOpen() { return isOpen_; }
 
-private:
+   private:
     Log();
     void AppendLogLevelTitle_(int level);
     virtual ~Log();
     void AsyncWrite_();
 
-private:
-    static const int LOG_PATH_LEN = 256;    // 日志文件最长文件名
-    static const int LOG_NAME_LEN = 256;    // 日志最长名字
-    static const int MAX_LENS = 50000;      // 日志文件内的最长日志条数
+   private:
+    static const int LOG_PATH_LEN = 256;  // 日志文件最长文件名
+    static const int LOG_NAME_LEN = 256;  // 日志最长名字
+    static const int MAX_LENS = 50000;    // 日志文件内的最长日志条数
 
     const char* path_;
     const char* suffix_;
@@ -59,22 +60,39 @@ private:
     std::mutex mtx_;
 };
 
-
-#define LOG_BASE(level, format, ...) \
-    do {\
-        Log* log = Log::Instance();\
-        if (log->IsOpen() && log->GetLevel() <= level) {\
-            log->write(level, format, ##__VA_ARGS__); \
-            log->flush();\
-        }\
-    } while(0);
+#define LOG_BASE(level, format, ...)                   \
+    do                                                 \
+    {                                                  \
+        Log* log = Log::Instance();                    \
+        if (log->IsOpen() && log->GetLevel() <= level) \
+        {                                              \
+            log->write(level, format, ##__VA_ARGS__);  \
+            log->flush();                              \
+        }                                              \
+    } while (0);
 
 // 四个宏定义，主要用于不同类型的日志输出，也是外部使用日志的接口
 // ...表示可变参数，__VA_ARGS__就是将...的值复制到这里
 // 前面加上##的作用是：当可变参数的个数为0时，这里的##可以把把前面多余的","去掉,否则会编译出错。
-#define LOG_DEBUG(format, ...) do {LOG_BASE(0, format, ##__VA_ARGS__)} while(0);    
-#define LOG_INFO(format, ...) do {LOG_BASE(1, format, ##__VA_ARGS__)} while(0);
-#define LOG_WARN(format, ...) do {LOG_BASE(2, format, ##__VA_ARGS__)} while(0);
-#define LOG_ERROR(format, ...) do {LOG_BASE(3, format, ##__VA_ARGS__)} while(0);
+#define LOG_DEBUG(format, ...)             \
+    do                                     \
+    {                                      \
+        LOG_BASE(0, format, ##__VA_ARGS__) \
+    } while (0);
+#define LOG_INFO(format, ...)              \
+    do                                     \
+    {                                      \
+        LOG_BASE(1, format, ##__VA_ARGS__) \
+    } while (0);
+#define LOG_WARN(format, ...)              \
+    do                                     \
+    {                                      \
+        LOG_BASE(2, format, ##__VA_ARGS__) \
+    } while (0);
+#define LOG_ERROR(format, ...)             \
+    do                                     \
+    {                                      \
+        LOG_BASE(3, format, ##__VA_ARGS__) \
+    } while (0);
 
-#endif //LOG_H
+#endif  // LOG_H
