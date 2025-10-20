@@ -38,7 +38,7 @@ class Log
    private:
     static const int LOG_PATH_LEN = 256;  // 日志文件最长文件名
     static const int LOG_NAME_LEN = 256;  // 日志最长名字
-    static const int MAX_LENS = 50000;    // 日志文件内的最长日志条数
+    static const int MAX_LINES = 50000;   // 日志文件内的最长日志条数
 
     const char* path_;
     const char* suffix_;
@@ -55,7 +55,7 @@ class Log
     bool isAsync_;
 
     FILE* fp_;
-    std::unique_ptr<BlockkQueue<std::string>> deque_;
+    std::unique_ptr<BlockQueue<std::string>> deque_;
     std::unique_ptr<std::thread> writeThread_;
     std::mutex mtx_;
 };

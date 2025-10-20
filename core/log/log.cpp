@@ -80,12 +80,15 @@ void Log::init(int level, const char* path, const char* suffix, int maxQueCapaci
     }
 
     lineCount_ = 0;
+
     time_t timer = time(nullptr);
     struct tm* sysTime = localtime(&timer);
+    struct tm t = *sysTime;
+
     char fileName[LOG_NAME_LEN] = {0};
-    snprintf(fileName, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d%s", path_, systime->tm_year + 1900, systime->tm_mon + 1,
-             systime->tm_mday, suffix_);
-    toDay_ = systime->tm_mday;
+    snprintf(fileName, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d%s", path_, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+             suffix_);
+    toDay_ = t.tm_mday;
 
     {
         lock_guard<mutex> locker(mtx_);
