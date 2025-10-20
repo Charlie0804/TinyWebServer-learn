@@ -71,14 +71,14 @@ void BlockQueue<T>::clear()
 }
 
 template <typename T>
-void BlockQueue<T>::empty()
+bool BlockQueue<T>::empty()
 {
     lock_guard<mutex> locker(mtx_);
     return deq_.empty();
 }
 
 template <typename T>
-void BlockQueue<T>::full()
+bool BlockQueue<T>::full()
 {
     lock_guard<mutex> locker(mtx_);
     return deq.size() >= capacity_;
