@@ -16,7 +16,7 @@ class Buffer
     Buffer(int initBuffSize = 1024);
     ~Buffer() = default;
 
-    size_t WriteableBytes() const;
+    size_t WritableBytes() const;
     size_t ReadableBytes() const;
     size_t PrependableBytes() const;
 

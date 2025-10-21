@@ -4,7 +4,7 @@
 Buffer::Buffer(int initBuffSize) : buffer_(initBuffSize), readPos_(0), writePos_(0) {}
 
 // 可写的数量 ： buffer大小 - 写下标
-size_t Buffer::WriteableBytes() const { return buffer_.size() - writePos_; }
+size_t Buffer::WritableBytes() const { return buffer_.size() - writePos_; }
 
 // 可读的数量 ： 写下标 - 读下标
 size_t Buffer::ReadableBytes() const { return writePos_ - readPos_; }
@@ -17,11 +17,11 @@ const char* Buffer::Peek() const { return &buffer_[readPos_]; }
 // 确保可写的长度
 void Buffer::EnsureWriteable(size_t len)
 {
-    if (len > WriteableBytes())
+    if (len > WritableBytes())
     {
         MakeSpace_(len);
     }
-    assert(len <= WriteableBytes());  // 确保可写的长度
+    assert(len <= WritableBytes());  // 确保可写的长度
 }
 
 // 移动写下标，在Append中使用
@@ -47,7 +47,7 @@ void Buffer::RetrieveAll()
 // 取出剩余可读的str
 std::string Buffer::RetrieveAllToStr()
 {
-    str::string str(Peek(), ReadableBytes());
+    std::string str(Peek(), ReadableBytes());
     RetrieveAll();
     return str;
 }
@@ -66,7 +66,7 @@ void Buffer::Append(const char* str, size_t len)
     HasWritten(len);
 }
 
-void Append(const void* data, size_t len) { Append(str.c_str(), str.size()); }
+void Append(const std::string& str) { Append(str.c_str(), str.size()); }
 
 void Append(const void* data, size_t len) { Append(static_cast<const char*>(data), len); }
 
@@ -77,8 +77,8 @@ void Append(const Buffer& buff) { Append(buff.Peek(), buff.ReadableBytes()); }
 ssize_t Buffer::ReadFd(int fd, int* Errno)
 {
     char buff[65535];
-    struct iovec vec[2];
-    size_t writeable = WriteableBytes();
+    struct iovec iov[2];
+    size_t writeable = WritableBytes();
     // 分散读
     iov[0].iov_base = BeginWrite();
     iov[0].iov_len = writeable;
@@ -119,9 +119,9 @@ char* Buffer::BeginPtr_() { return &buffer_[0]; }
 
 const char* Buffer::BeginPtr_() const { return &buffer_[0]; }
 
-void Beffer::MakeSpace_(size_t len)
+void Buffer::MakeSpace_(size_t len)
 {
-    if (WriteableBytes() + PrependableBytes() < len)
+    if (WritableBytes() + PrependableBytes() < len)
     {
         buffer_.resize(writePos_ + len + 1);
     }
@@ -131,6 +131,6 @@ void Beffer::MakeSpace_(size_t len)
         std::copy(BeginPtr_() + readPos_, BeginPtr_() + writePos_, BeginPtr_());
         readPos_ = 0;
         writePos_ = readable;
-        assert(readable == ReadableBytes())
+        assert(readable == ReadableBytes());
     }
 }
