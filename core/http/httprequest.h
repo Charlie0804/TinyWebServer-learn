@@ -16,8 +16,10 @@
 class HttpRequest
 {
    public:
+    // 解析状态机
     enum PARSE_STATE
     {
+        // 请求行，请求头，请求体，解析完成
         REQUEST_LINE,
         HEADERS,
         BODY,
@@ -55,7 +57,9 @@ class HttpRequest
     PARSE_STATE state_;
     // HTTP方法(GET, POST), 请求路径, HTTP版本， 请求体
     std::string method_, path_, version_, body_;
+    // 请求头
     std::unordered_map<std::string, std::string> header_;
+    // POST参数
     std::unordered_map<std::string, std::string> post_;
 
     static const std::unordered_set<std::string> DEFAULT_HTML;
