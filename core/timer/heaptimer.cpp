@@ -49,7 +49,10 @@ bool HeapTimer::siftdown_(size_t i, size_t n)
             index = child;
             child = 2 * index + 1;
         }
-        break;
+        else
+        {
+            break;
+        }
     }
     return index > i;
 }
